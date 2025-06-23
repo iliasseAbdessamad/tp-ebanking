@@ -22,8 +22,9 @@ public class AccountOperation {
     private String description;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OperationType operationType;
 
-    @Column(nullable = false) @ManyToOne
+    @ManyToOne
     private BankAccount bankAccount;
 }

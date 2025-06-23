@@ -4,30 +4,32 @@ package com.ebanking.entities;
 import com.ebanking.enums.AccountStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) @DiscriminatorColumn(name = "type", length = 2)
-@NoArgsConstructor @AllArgsConstructor @Data @ToString @Builder
+@NoArgsConstructor @AllArgsConstructor @Data @ToString @SuperBuilder
 public class BankAccount {
 
     @Id
-    private String id;
+    protected String id;
 
     @Column(nullable = false)
-    private Date createdAt;
+    protected Date createdAt;
 
     @Column(nullable = false)
-    private double balance;
+    protected double balance;
 
     @Column(nullable = false)
-    private AccountStatus accountStatus;
+    @Enumerated(EnumType.STRING)
+    protected AccountStatus accountStatus;
 
-    @Column(nullable = false) @ManyToOne
-    private Customer customer;
+    @ManyToOne
+    protected Customer customer;
 
     @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)
-    private List<AccountOperation> accountOperations;
+    protected List<AccountOperation> accountOperations;
 }
