@@ -12,6 +12,6 @@ public interface BankAccountService {
 
     BankAccountResponseDTO createBankAccount(BankAccountCreateRequestDTO bankAccountCreateRequestDTO) throws AmountCannotBeNegativeException, CustomerDoesntExistsException, InvalidAccountTypeException;
     BankAccountResponseDTO findBankAccountById(String id) throws AccountNotFoundException;
-     List<BankAccountResponseDTO> findAllBankAccounts();
+    List<BankAccountResponseDTO> findAllBankAccounts();
     BankAccountResponseDTO updateBankAccountStatus(String id, BankAccountUpdateStatusRequestDTO bankAccountUpdateStatusRequestDTO) throws AccountNotFoundException, AccountStillFundedException, InvalidAccountStatusException, ExistingAccountCannotBeCreatedTwiceException;
 }

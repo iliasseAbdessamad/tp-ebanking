@@ -30,6 +30,6 @@ public class BankAccount {
     @ManyToOne
     protected Customer customer;
 
-    @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     protected List<AccountOperation> accountOperations;
 }

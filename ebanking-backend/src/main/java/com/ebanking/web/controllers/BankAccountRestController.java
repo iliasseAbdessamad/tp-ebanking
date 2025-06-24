@@ -21,6 +21,7 @@ public class BankAccountRestController {
 
     private BankAccountService bankAccountService;
 
+
     @GetMapping("/accounts")
     public ResponseEntity<List<BankAccountResponseDTO>> allAccounts(){
         List<BankAccountResponseDTO> bankAccountResponseDTOList = this.bankAccountService.findAllBankAccounts();
@@ -128,7 +129,6 @@ public class BankAccountRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
-
 
     private  ResponseErrorDTO responseError(String title, String errorMessage, HttpStatus status){
         return new ResponseErrorDTO(title, errorMessage, status);

@@ -3,13 +3,14 @@ package com.ebanking.dtos.bankaccount.response;
 import com.ebanking.enums.AccountStatus;
 import lombok.*;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder @ToString
 public class BankAccountResponseDTO {
-    private String id;
-    private double balance;
-    private Date createdAt;
-    private Long customerId;
-    private AccountStatus accountStatus;
-    private String accountType;
+    protected String id;
+    protected double balance;
+    protected Date createdAt;
+    protected Long customerId;
+    protected AccountStatus accountStatus;
+    protected String accountType;
 }

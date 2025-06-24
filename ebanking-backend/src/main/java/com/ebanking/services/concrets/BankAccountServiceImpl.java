@@ -29,6 +29,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     private CustomerRepository customerRepository;
     private BankAccountRepository bankAccountRepository;
 
+
     @Override
     public BankAccountResponseDTO createBankAccount(BankAccountCreateRequestDTO bankAccountCreateRequestDTO) throws AmountCannotBeNegativeException, CustomerDoesntExistsException, InvalidAccountTypeException {
 
@@ -107,7 +108,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             if(bankAccount instanceof  CurrentAccount){
                 bankAccountResponseDTO.setAccountType(AccountType.CURRENT_ACCOUNT.getAccountType());
             }
-            else if(bankAccount instanceof  CurrentAccount){
+            else if(bankAccount instanceof  SavingAccount){
                 bankAccountResponseDTO.setAccountType(AccountType.SAVING_ACCOUNT.getAccountType());
             }
 
