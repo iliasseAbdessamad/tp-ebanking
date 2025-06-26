@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-public class BankAccountRestController {
+public class BankAccountController {
 
     private BankAccountService bankAccountService;
 

@@ -57,7 +57,7 @@ public class EbankingApplication {
 					.id(UUID.randomUUID().toString())
 					.createdAt(new Date())
 					.balance(10000 * Math.random())
-					.overDraft(5000 * Math.random())
+					.overDraft(800)
 					.customer(customer)
 					.accountStatus(AccountStatus.ACTIVATED)
 					.build();
@@ -83,7 +83,7 @@ public class EbankingApplication {
 						.date(new Date())
 						.amount(300 * Math.random())
 						.description("Description de l'opération " + i)
-						.operationType(Math.random() > 0.5 ? OperationType.CREDIT : OperationType.DEBIT)
+						.operationType(Math.random() > 0.5 ? OperationType.DEPOSIT : OperationType.WITHDRAW)
 						.bankAccount(account)
 						.build();
 
