@@ -4,6 +4,7 @@ import com.ebanking.dtos.ResponseErrorDTO;
 import com.ebanking.dtos.bankaccount.request.BankAccountCreateRequestDTO;
 import com.ebanking.dtos.bankaccount.request.BankAccountUpdateStatusRequestDTO;
 import com.ebanking.dtos.bankaccount.response.BankAccountResponseDTO;
+import com.ebanking.dtos.bankaccount.response.OperationsHistoryResponseDTO;
 import com.ebanking.enums.AccountType;
 import com.ebanking.exceptions.account.*;
 import com.ebanking.exceptions.customer.CustomerDoesntExistsException;
@@ -42,6 +43,27 @@ public class BankAccountController {
                     "Il n'existe aucun compte bankcaire qui sont id est " + ex.getInvalidIdAccount(),
                     HttpStatus.NOT_FOUND
             );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    @GetMapping("/accounts/{id}/opeations")
+    public ResponseEntity<?> oprationsHistory(@PathVariable String id,
+                                              @RequestParam(name="page", defaultValue = "0") int page,
+                                              @RequestParam(name="size", defaultValue = "3") int size){
+        try{
+            OperationsHistoryResponseDTO responseDTO = this.bankAccountService
+                                                        .getPaginatedOperationsForAccount(id, page, size);
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        }
+        catch(AccountNotFoundException ex){
+            ResponseErrorDTO error = this.responseError(
+                    "Compte introuvale",
+                    "Il n'existe aucun compte qui sont id est " + ex.getInvalidIdAccount(),
+                    HttpStatus.NOT_FOUND
+            );
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }

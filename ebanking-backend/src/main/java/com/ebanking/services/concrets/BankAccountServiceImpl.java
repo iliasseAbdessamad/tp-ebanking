@@ -1,18 +1,25 @@
 package com.ebanking.services.concrets;
 
+import com.ebanking.dtos.OperationDTO;
 import com.ebanking.dtos.bankaccount.request.BankAccountCreateRequestDTO;
 import com.ebanking.dtos.bankaccount.request.BankAccountUpdateStatusRequestDTO;
 import com.ebanking.dtos.bankaccount.response.BankAccountResponseDTO;
+import com.ebanking.dtos.bankaccount.response.OperationsHistoryResponseDTO;
 import com.ebanking.entities.*;
 import com.ebanking.enums.AccountStatus;
 import com.ebanking.enums.AccountType;
 import com.ebanking.exceptions.account.*;
 import com.ebanking.exceptions.customer.CustomerDoesntExistsException;
 import com.ebanking.exceptions.operations.AmountCannotBeNegativeException;
+import com.ebanking.repositories.AccountOperationRepository;
 import com.ebanking.repositories.BankAccountRepository;
 import com.ebanking.repositories.CustomerRepository;
 import com.ebanking.services.abstracts.BankAccountService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
@@ -28,6 +35,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private CustomerRepository customerRepository;
     private BankAccountRepository bankAccountRepository;
+    private AccountOperationRepository accountOperationRepository;
 
 
     @Override
@@ -191,9 +199,71 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountResponseDTOS;
     }
 
+    public OperationsHistoryResponseDTO getPaginatedOperationsForAccount(String id, int page, int size) throws AccountNotFoundException{
+        try{
+            BankAccount account = this.bankAccountRepository.findById(id).orElseThrow();
+            Pageable pageable = PageRequest.of(page, size, Sort.by("date").descending());
+            Page<AccountOperation> peagableOperations = this.accountOperationRepository.findByBankAccountId(id, pageable);
+
+            //Map
+            List<OperationDTO> operationDtoList = peagableOperations.getContent().stream().map(
+                    o -> {
+                        return OperationDTO.builder()
+                                .idAccount(o.getId())
+                                .operationType(o.getOperationType().name())
+                                .date(new Date())
+                                .amount(o.getAmount())
+                                .description(o.getDescription())
+                                .build();
+                    }
+            ).toList();
+
+            BankAccountResponseDTO accountDto= BankAccountResponseDTO.builder()
+                    .id(id)
+                    .createdAt(account.getCreatedAt())
+                    .balance(account.getBalance())
+                    .accountStatus(account.getAccountStatus())
+                    .customerId(account.getCustomer().getId())
+                    .build();
+            if(account instanceof  CurrentAccount){
+                accountDto.setAccountType(AccountType.CURRENT_ACCOUNT.getAccountType());
+            }
+            else if(account instanceof  SavingAccount){
+                accountDto.setAccountType(AccountType.SAVING_ACCOUNT.getAccountType());
+            }
+
+            OperationsHistoryResponseDTO responseDTO = OperationsHistoryResponseDTO.builder()
+                    .currentPage(page)
+                    .pageSize(size)
+                    .account(accountDto)
+                    .operations(operationDtoList)
+                    .totalPages(peagableOperations.getTotalPages())
+                    .build();
+
+            return responseDTO;
+        }
+        catch(NoSuchElementException ex){
+            throw new AccountNotFoundException(id);
+        }
+    }
+
     private void checkAmountPositiveAndThrowIfNegatif(double amount) throws AmountCannotBeNegativeException {
         if(amount < 0){
             throw new AmountCannotBeNegativeException(amount);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
